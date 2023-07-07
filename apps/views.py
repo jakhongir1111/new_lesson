@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import render
 
-from apps.models import Post
+from apps.models import Post, Comment
 
 
 def index(request):
@@ -11,10 +11,15 @@ def index(request):
 
 def detail(request, slug):
     post = Post.objects.filter(slug=slug).first()
+    if request.POST:
+        data = request.POST
+        name = data.get('Name')
+        email = data.get('Email')
+        text = data.get('message')
+        Comment.objects.create(name=name, email=email, text=text, post=post)
+
     author = post.author
     author_posts = Post.objects.filter(~Q(slug=slug), author=author)
-    # eye = Post.objects.filter(slug=slug).first()
-    # Post.objects.filter(slug=slug).update(views=eye.views + 1)
     post.views += 1
     post.save()
     return render(request, 'blog_detail.html', {'post': post, 'author_posts': author_posts})
