@@ -23,3 +23,4 @@ def detail(request, slug):
     post.views += 1
     post.save()
     return render(request, 'blog_detail.html', {'post': post, 'author_posts': author_posts})
+
