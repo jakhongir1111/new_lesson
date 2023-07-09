@@ -24,3 +24,7 @@ def detail(request, slug):
     post.save()
     return render(request, 'blog_detail.html', {'post': post, 'author_posts': author_posts})
 
+
+def show_comments(request):
+    comment = Comment.objects.all()
+    return render(request, 'blog_detail.html', {'comment': comment})

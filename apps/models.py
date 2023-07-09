@@ -3,8 +3,7 @@ from django.db.models import Model, CharField, TextField, ImageField, IntegerFie
     SlugField, EmailField
 from django.utils.text import slugify
 from unidecode import unidecode
-
-
+from time import time
 
 
 class Post(Model):
@@ -20,28 +19,30 @@ class Post(Model):
     def __str__(self):
         return self.title
 
+    # def save(self, *args, **kwargs):
+    #     if not self.slug:
+    #         self.slug = slugify(unidecode(self.title))
+    #         try:
+    #             last = Post.objects.filter(slug__regex="%s-\d+" % self.slug).latest('id')
+    #
+    #             trash, count = last.slug.rsplit('-', 1)
+    #             count = int(count) + 1
+    #         except:
+    #             count = 1
+    #         while count < 1000:
+    #             self.slug = "%s-%d" % (self.slug, count)
+    #             try:
+    #                 super(Post, self).save(*args, **kwargs)
+    #                 break
+    #             except IntegrityError as exc:
+    #                 count += 1
+    #
+    #     super().save(*args, **kwargs)
+
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(unidecode(self.title))
-            try:
-                last = Post.objects.filter(slug__regex="%s-\d+" % self.slug).latest('id')
-
-                trash, count = last.slug.rsplit('-', 1)
-                count = int(count) + 1
-            except:
-                count = 1
-            while count < 1000:
-                self.slug = "%s-%d" % (self.slug, count)
-                try:
-                    super(Post, self).save(*args, **kwargs)
-                    break
-                except IntegrityError as exc:
-                    count += 1
-
+            self.slug = slugify(unidecode(f"{self.title} + {time()}"))
         super().save(*args, **kwargs)
-
-
-
 
     class Meta:
         ordering = '-published_at',
